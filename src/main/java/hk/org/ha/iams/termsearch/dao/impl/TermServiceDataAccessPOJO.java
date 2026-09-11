@@ -909,9 +909,9 @@ public class TermServiceDataAccessPOJO implements TermServiceDataAccess {
 						String requestUser = rs.getString(fieldIndex++);
 						Integer requestHospCd = TermNumbers.toInteger(rs.getString(fieldIndex++));
 						String createUser = rs.getString(fieldIndex++);
-						Date createDtm = TermDates.toDate(rs.getTimestamp(fieldIndex++));
+						Date createDtm = TermDates.fromJdbc(rs.getObject(fieldIndex++));
 						String updateUser = rs.getString(fieldIndex++);
-						Date updateDtm = TermDates.toDate(rs.getTimestamp(fieldIndex++));
+						Date updateDtm = TermDates.fromJdbc(rs.getObject(fieldIndex++));
 
 						basicTermData.setRemarks(remarks);
 						basicTermData.setRequestUser(requestUser);
@@ -1322,7 +1322,7 @@ public class TermServiceDataAccessPOJO implements TermServiceDataAccess {
 
 			Map<String, Object> parameterMap = new HashMap<String, Object>();
 
-			String sql = "SELECT s.code, s.code_version, CAST(s.code_version_date AS TIMESTAMP) AS code_version_date FROM iams_concept_sct s WHERE s.term_key = :termKey ";
+			String sql = "SELECT s.code, s.code_version, s.code_version_date FROM iams_concept_sct s WHERE s.term_key = :termKey ";
 
 			parameterMap.put("termKey", termKey);
 			SqlRowSet rs = getJdbcTemplate().queryForRowSet(sql, parameterMap);
@@ -1332,7 +1332,7 @@ public class TermServiceDataAccessPOJO implements TermServiceDataAccess {
 
 				snomedct.setCode(rs.getString("code"));
 				snomedct.setVersion(rs.getString("code_version"));
-				snomedct.setVersionDate(rs.getTimestamp("code_version_date"));
+				snomedct.setVersionDate(TermDates.fromJdbc(rs.getObject("code_version_date")));
 
 				snomedcts.add(snomedct);
 			}
