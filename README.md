@@ -1,8 +1,8 @@
 # iams-iasvc-termsearch-svc
 
 REST Cloud rewrite of **IAMS Terminology Search** (`iams-iasrv-termsearch` 6.0.2 EJB / WebLogic)
-for OpenShift (`ha-app`). This `base` branch is the **scaffold**: Maven, Direct package tree,
-Helm values, and DEV CI. Search SQL is not ported yet.
+for OpenShift (`ha-app`). Layer 3 is on `base`: manager validation + JDBC search SQL
+(legacy `TermServiceDataAccessPOJO`). Local profile still does **not** open Oracle.
 
 | | |
 |---|---|
@@ -34,25 +34,18 @@ java -jar target/iams-iasvc-termsearch-svc.jar --spring.profiles.active=local
 Local profile does **not** open Oracle. Actuator: `/actuator/health/liveness`.
 OpenAPI: `/v3/api-docs`.
 
-## Tests (Layer 0–2)
+## Tests (Layer 0–3)
 
 | Class | When it runs | What it proves |
 |---|---|---|
-| `TermServiceApiPlaceholderTest` | always | stub HTTP 200 + `returnCode` 7, malformed JSON → 400 |
-| `TermServiceApiFixtureContractTest` | always | S1/S4/D1/D3 JSON binds (Jackson) and stays HTTP 200 |
-| `TermServiceApiHappyTest` | `@Disabled` until SQL port | S1–S4, D1–D3 → `returnCode` 0 |
-| `TermServiceApiEdgeTest` | `@Disabled` until validation + SQL | S5/D5 → **6**; S6 → 7 (real no-record); D4 → **9** + ALS 404 log |
+| `TermServiceApiPlaceholderTest` | always | empty `{}` → **6**, malformed JSON → 400 |
+| `TermServiceApiFixtureContractTest` | always | S1/S4/D1/D3 JSON binds; HTTP 200 |
+| `TermServiceApiEdgeTest` | always | S5/D5 → **6**; S6 → **7**; D4 → **9** + ALS 404 log |
+| `TermServiceApiHappyTest` | `@Disabled` until DEV Oracle | S1–S4, D1–D3 → `returnCode` **0** |
 
-Fixtures: `src/test/resources/fixtures/` (from old EJB `main()` tests / health servlets).
-Paste CMS/DEV Oracle bodies over `recordsPending: true` in `*.expected.json`.
+Local profile does **not** open Oracle (`termsearch.datasource.enabled=false`). Valid searches then return 7 (empty DAO). Point `ORACLE_URL` / profile `dev` at DEV TNS, then remove `@Disabled` on HappyTest.
 
-To run Happy/Edge locally (they **fail** on the stub — that is the TDD signal):
-
-```
-./mvnw -B test -Dtest=TermServiceApiHappyTest -Dsurefire.failIfNoSpecifiedTests=false
-```
-
-Remove `@Disabled` on those two classes after spec steps 6–7.
+Lookup SQL (when UCP is on): `iams_lookup_value` + `iams_lookup_list`.
 
 ## CI / OCP (DEV)
 
@@ -73,6 +66,6 @@ Replace `REPLACE_*_HOST` in `values-*.yaml` with DBA TNS hosts before deploy.
 
 ## Out of this drop
 
-- Legacy search SQL (`TermServiceDataAccessPOJO`) — next drop
 - Conjur / Summon, EHR `common-ucp`, ALS JARs, Snowstorm, JMS, SGR
 - SIT→PRD promotion workflows
+- HappyTest against live DEV Oracle (remove `@Disabled` after TNS is set)

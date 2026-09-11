@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Layer 2 happy paths from old EJB tests. Enable after TermServiceDataAccessPOJO SQL port.
  * Stub today returns returnCode 7 ("SQL port pending") — these would fail, which is the TDD signal.
  */
-@Disabled("Enable after DAO SQL port (spec step 6). Stub currently returns returnCode 7.")
+@Disabled("Enable after DEV Oracle (termsearch.datasource.enabled=true). Local profile has no DataSource so valid searches return 7.")
 @SpringBootTest
 @AutoConfigureMockMvc
 class TermServiceApiHappyTest {

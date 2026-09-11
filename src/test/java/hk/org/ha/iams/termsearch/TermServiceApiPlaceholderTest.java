@@ -12,8 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Scaffold smoke only. Empty {} → 7 is the SQL stub, not EJB validation (that is 6).
- * Real cases: TermServiceApiHappyTest / TermServiceApiEdgeTest.
+ * Scaffold smoke. Empty {} → 6 (missing compulsory). Malformed JSON → 400.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -28,7 +27,7 @@ class TermServiceApiPlaceholderTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.termStatus.returnCode").value(7));
+                .andExpect(jsonPath("$.termStatus.returnCode").value(6));
     }
 
     @Test
@@ -37,7 +36,7 @@ class TermServiceApiPlaceholderTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status.returnCode").value(7));
+                .andExpect(jsonPath("$.status.returnCode").value(6));
     }
 
     @Test

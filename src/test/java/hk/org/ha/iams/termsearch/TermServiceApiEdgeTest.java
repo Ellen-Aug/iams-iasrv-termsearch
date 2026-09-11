@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,10 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Layer 2 edge paths. Enable after manager validation is ported (S5/D5)
- * and DAO SQL is ported (S6/D4). Empty {} is returnCode 6, not 5 (criteria is non-null).
+ * Layer 2 edge paths. S5/D5 validation and S6/D4 no-record work without Oracle
+ * (local profile has no DataSource → empty DAO results).
  */
-@Disabled("Enable after manager validation (S5/D5) and DAO SQL (S6/D4). Stub currently returns 7 for every body.")
 @SpringBootTest
 @AutoConfigureMockMvc
 class TermServiceApiEdgeTest {
