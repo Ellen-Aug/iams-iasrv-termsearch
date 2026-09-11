@@ -1,0 +1,32 @@
+package hk.org.ha.iams.termsearch.validation;
+
+import java.io.Serializable;
+
+public class ReturnMessage implements Serializable {
+
+	private static final long serialVersionUID = 5894652912040929835L;
+
+	public enum Error {
+		SUCCESS,
+		FAIL,
+		FAIL_INVALID_XML,
+		FAIL_BATCH_SEQ_ID_NOT_UDPATED,
+		FAIL_UNKNOWN_EXCEPTION,
+		EXCEPTION_WITHOUT_INPUT_PARAMETER, 
+		EXCEPTION_MISSING_COMPULSORY_INPUT_PARAMETERS,
+		ERROR_NO_RECORD_FOUND,
+		ERROR_EXCEEDS_RECORDS_LIMIT,
+		ERROR_SOME_RECORDS_NOT_FOUND,
+		INVALID_USER_ACCOUNT,
+		USER_IS_NOT_FORM_CREATOR,
+		JAXB_PARSING_ERROR,
+		ERROR_MESSAGE_RETURN_FROM_PROGRAM,
+		WARNING_SERVICE_UNAVAILABLE,
+		ERROR_CONCEPT_PROMOTION_ERROR
+	}
+
+	private ReturnMessage() {
+		super();
+	}
+
+}
