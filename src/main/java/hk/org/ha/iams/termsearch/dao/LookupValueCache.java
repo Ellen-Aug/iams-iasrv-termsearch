@@ -92,7 +92,7 @@ public class LookupValueCache {
             });
             return new LookupValueDTO(valueKey, dataValue != null ? dataValue : String.valueOf(valueKey));
         } catch (RuntimeException ex) {
-            LOG.warn("lookup by value_key {} failed: {}", valueKey, ex.getMostSpecificCause().getMessage());
+            LOG.warn("lookup by value_key {} failed: {}", valueKey, rootMessage(ex));
             return new LookupValueDTO(valueKey, String.valueOf(valueKey));
         }
     }
@@ -113,7 +113,7 @@ public class LookupValueCache {
                 return null;
             });
         } catch (RuntimeException ex) {
-            LOG.warn("lookup list {} value {} failed: {}", listName, dataValue, ex.getMostSpecificCause().getMessage());
+            LOG.warn("lookup list {} value {} failed: {}", listName, dataValue, rootMessage(ex));
             return null;
         }
     }
@@ -139,9 +139,17 @@ public class LookupValueCache {
                 jdbc.getJdbcOperations().execute("SELECT 1 FROM " + table + " WHERE 1 = 0");
                 return table;
             } catch (RuntimeException ex) {
-                LOG.info("lookup table {} skipped: {}", table, ex.getMostSpecificCause().getMessage());
+                LOG.info("lookup table {} skipped: {}", table, rootMessage(ex));
             }
         }
         return null;
+    }
+
+    private static String rootMessage(Throwable ex) {
+        Throwable root = ex;
+        while (root.getCause() != null && root.getCause() != root) {
+            root = root.getCause();
+        }
+        return root.getMessage() != null ? root.getMessage() : ex.getMessage();
     }
 }
