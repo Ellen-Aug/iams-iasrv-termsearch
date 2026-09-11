@@ -23,8 +23,8 @@ public class LookupValueCache {
 
     private static final Logger LOG = LoggerFactory.getLogger(LookupValueCache.class);
 
-    private static final List<String> VALUE_TABLES = List.of("LOOKUP_VALUE", "iams_lookup_value");
-    private static final List<String> LIST_TABLES = List.of("LOOKUP_LIST", "iams_lookup_list");
+    private static final List<String> VALUE_TABLES = List.of("IAMS_VALUE", "LOOKUP_VALUE", "iams_lookup_value");
+    private static final List<String> LIST_TABLES = List.of("IAMS_VALUE_LIST", "LOOKUP_LIST", "iams_lookup_list");
 
     private final NamedParameterJdbcTemplate jdbc;
     private final ConcurrentHashMap<Integer, LookupValueDTO> byKey = new ConcurrentHashMap<>();
