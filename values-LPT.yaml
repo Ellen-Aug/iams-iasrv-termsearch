@@ -1,0 +1,68 @@
+# ha-app values — LPT (LPT single). CI promotion is DEV-only in v1. Values-only; chart comes from helm-dev-chassis.
+fullnameOverride: iams-iasvc-termsearch-svc
+replicaCount: 1
+
+image:
+  repository: artifactrepo.server.ha.org.hk:55743/docker-dev-iams/iams-iasvc-termsearch-svc
+  tag: latest
+  pullPolicy: Always
+
+ucp:
+  enabled: true
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  hosts:
+    - host: iams-iasvc-termsearch-svc.lptcld.server.ha.org.hk
+      paths:
+        - path: /
+          pathType: Prefix
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8080
+  initialDelaySeconds: 50
+  periodSeconds: 10
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8080
+  initialDelaySeconds: 50
+  periodSeconds: 10
+
+resources:
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+monitoring:
+  enable: false
+persistence:
+  enable: false
+
+env:
+  - name: APP_NAME
+    value: iams-iasvc-termsearch-svc
+  - name: SPRING_PROFILES_ACTIVE
+    value: lpt
+  - name: ENABLE_APM_AGENT
+    value: "true"
+  - name: ALS_LOG_ENABLE
+    value: "false"
+  - name: ORACLE_USERNAME
+    value: iams_app_cld_rw_user
+  - name: ORACLE_URL
+    value: "jdbc:oracle:thin:@(DESCRIPTION=(ENABLE=BROKEN)(CONNECT_TIMEOUT=120)(RETRY_COUNT=3)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=5)(LOAD_BALANCE=on)(FAILOVER=on)(ADDRESS=(PROTOCOL=TCP)(HOST=REPLACE_LPT_HOST)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=iams_dev_lpt)))"
+  - name: ORACLE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: iams-iasvc-termsearch-svc-db
+        key: ORACLE_PASSWORD
