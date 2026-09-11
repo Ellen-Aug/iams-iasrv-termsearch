@@ -15,7 +15,7 @@ HEAD of `base`: `a988975` (Ellen-Aug/iams-iasrv-termsearch).
 | S3 | Implement regenerate-code | `tools/regenerate-code/regenerate.js` is a no-op stub (O9). Scan `@DirectApi` / `@DirectManager` / `@DirectDataAccess` and generate impls, or remove the stub. |
 | S4 | CMS golden response fixtures | Fixture expected JSON is status-only (`recordsPending: true`). Capture real CMS request/response pairs and assert record fields, not only `returnCode` / `minCount`. |
 | S5 | D3 ICD9Px `100` data gap | DEV has no ICD9Px code `100`; Happy D3 expects returnCode **9**. Confirm with data owners whether to seed the code, change the fixture, or keep 9 as the DEV contract. |
-| S6 | Port EJB audit / request-key logging | Legacy request-key and audit logging from the EJB manager is not in the Cloud service. |
+| S6 | Port EJB audit / request-key logging | **Done on `base`:** `TermServiceCallAuditLog` logs Request/Response (SLF4J, no IAMS audit JAR). |
 | S7 | Align `application.yaml` default DB user | Cloud profile default is still `iams_app_cld_rw_user`. DEV Helm already sets `ORACLE_USERNAME=iams`. Align the default or document per-env override. |
 | S8 | Remaining `queryForRowSet` TIMESTAMP risk | SNOMED `code_version_date` uses a RowMapper. Other date columns (`create_dtm`, `update_dtm`) still go through `CachedRowSet` and can fail if CAST is removed. |
 

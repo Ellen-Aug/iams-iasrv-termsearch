@@ -9,16 +9,24 @@ import hk.org.ha.iams.termsearch.biz.dto.GetTermDescResult;
 import hk.org.ha.iams.termsearch.biz.dto.TermSrchCriteria;
 import hk.org.ha.iams.termsearch.biz.dto.TermSrchResult;
 import hk.org.ha.iams.tool.direct.DirectApi;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+/**
+ * REST for EJB {@code TermServiceManager} — those two methods are the full remote API.
+ */
 @DirectApi
 @Tag(name = "termsearch")
 @RequestMapping("/iams/api/termsearch")
 public interface TermServiceApi {
 
+    @Operation(summary = "searchTermCode",
+            description = "EJB TerminologySearch. HTTP 200; returnCode is in termStatus.")
     @PostMapping("/searchTermCode")
     TermSrchResult searchTermCode(@RequestBody TermSrchCriteria criteria);
 
+    @Operation(summary = "getTermDesc",
+            description = "EJB GetTerminologyDesc. HTTP 200; returnCode is in status.")
     @PostMapping("/getTermDesc")
     GetTermDescResult getTermDesc(@RequestBody GetTermDescCriteria criteria);
 }

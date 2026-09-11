@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import hk.org.ha.iams.server.AlsNotFoundLog;
+import hk.org.ha.iams.termsearch.biz.TermServiceCallAuditLog;
 import hk.org.ha.iams.termsearch.biz.TermServiceManager;
 import hk.org.ha.iams.termsearch.biz.dto.Alias;
 import hk.org.ha.iams.termsearch.biz.dto.AssoEntity;
@@ -51,15 +52,18 @@ public class TermServiceManagerImpl implements TermServiceManager {
     private final TermServiceDataAccess termDataAccess;
     private final LookupValueCache lookupValueCache;
     private final AlsNotFoundLog alsNotFoundLog;
+    private final TermServiceCallAuditLog auditLog;
     private final boolean serviceEnabled;
 
     public TermServiceManagerImpl(TermServiceDataAccess termDataAccess,
             LookupValueCache lookupValueCache,
             AlsNotFoundLog alsNotFoundLog,
+            TermServiceCallAuditLog auditLog,
             @Value("${termsearch.enabled:true}") boolean serviceEnabled) {
         this.termDataAccess = termDataAccess;
         this.lookupValueCache = lookupValueCache;
         this.alsNotFoundLog = alsNotFoundLog;
+        this.auditLog = auditLog;
         this.serviceEnabled = serviceEnabled;
     }
 
@@ -68,6 +72,9 @@ public class TermServiceManagerImpl implements TermServiceManager {
         GetTermDescResult result = new GetTermDescResult();
         GetTermDescReturnStatus returnStatus = new GetTermDescReturnStatus();
         List<TermDesc> termDescs = null;
+        ServiceException serviceException = null;
+        String auditSession = auditLog.newSession();
+        auditLog.getDescRequest(auditSession, criteria);
 
         try {
             if (!serviceEnabled) {
@@ -112,6 +119,7 @@ public class TermServiceManagerImpl implements TermServiceManager {
                 }
             }
         } catch (ServiceException e) {
+            serviceException = e;
             returnStatus.setReturnCode(e.getCode() == null
                     ? Error.FAIL_UNKNOWN_EXCEPTION.ordinal()
                     : e.getCode());
@@ -120,6 +128,8 @@ public class TermServiceManagerImpl implements TermServiceManager {
             returnStatus.setTimestamp(new Timestamp(System.currentTimeMillis()));
         } catch (Exception e) {
             logger.error("Failure in getting term description", e);
+            serviceException = new ServiceException(Error.FAIL_UNKNOWN_EXCEPTION.ordinal(),
+                    TermServiceMessages.ERROR_EXCEPTION);
             returnStatus.setReturnCode(Error.FAIL_UNKNOWN_EXCEPTION.ordinal());
             returnStatus.setReturnMessage(TermServiceMessages.ERROR_EXCEPTION);
             returnStatus.setCount(0);
@@ -128,6 +138,7 @@ public class TermServiceManagerImpl implements TermServiceManager {
 
         result.setStatus(returnStatus);
         result.setTermDescs(termDescs);
+        auditLog.getDescResponse(auditSession, criteria, result, serviceException);
         return result;
     }
 
@@ -136,6 +147,9 @@ public class TermServiceManagerImpl implements TermServiceManager {
         TermSrchResult termSrchResult = new TermSrchResult();
         TermReturnStatus termReturnStatus = new TermReturnStatus();
         List<TermSrchRecord> termSrchRecords = null;
+        ServiceException serviceException = null;
+        String auditSession = auditLog.newSession();
+        auditLog.searchRequest(auditSession, termSrchCriteria);
 
         try {
             if (!serviceEnabled) {
@@ -168,6 +182,7 @@ public class TermServiceManagerImpl implements TermServiceManager {
                 }
             }
         } catch (ServiceException e) {
+            serviceException = e;
             if (e.getCode() != null && e.getCode().equals(Error.ERROR_EXCEEDS_RECORDS_LIMIT.ordinal())) {
                 termReturnStatus.setReturnCode(e.getCode());
                 termReturnStatus.setReturnMessage(e.getMessage());
@@ -183,6 +198,8 @@ public class TermServiceManagerImpl implements TermServiceManager {
             }
         } catch (Exception e) {
             logger.error("Failure in searching term code", e);
+            serviceException = new ServiceException(Error.FAIL_UNKNOWN_EXCEPTION.ordinal(),
+                    TermServiceMessages.ERROR_EXCEPTION);
             termReturnStatus.setReturnCode(Error.FAIL_UNKNOWN_EXCEPTION.ordinal());
             termReturnStatus.setReturnMessage(TermServiceMessages.ERROR_EXCEPTION);
             termReturnStatus.setCount(0);
@@ -191,6 +208,7 @@ public class TermServiceManagerImpl implements TermServiceManager {
 
         termSrchResult.setTermStatus(termReturnStatus);
         termSrchResult.setTermSrchRecords(termSrchRecords);
+        auditLog.searchResponse(auditSession, termSrchCriteria, termSrchResult, serviceException);
         return termSrchResult;
     }
 
