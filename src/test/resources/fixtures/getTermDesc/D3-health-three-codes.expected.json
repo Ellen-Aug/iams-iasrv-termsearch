@@ -1,9 +1,9 @@
 {
   "httpStatus": 200,
   "statusField": "status",
-  "returnCode": 0,
+  "returnCode": 9,
   "minCount": 3,
-  "alsHttp404": false,
+  "alsHttp404": true,
   "recordsPending": true,
-  "source": "GetTermDescHealthTest.java — expects 3 termDescs"
+  "source": "GetTermDescHealthTest.java — 3 termDescs; ICD9Px 100 is not in DEV so returnCode 9"
 }
