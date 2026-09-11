@@ -9,8 +9,10 @@ import hk.org.ha.iams.termsearch.biz.dto.GetTermDescResult;
 import hk.org.ha.iams.termsearch.biz.dto.TermSrchCriteria;
 import hk.org.ha.iams.termsearch.biz.dto.TermSrchResult;
 import hk.org.ha.iams.tool.direct.DirectApi;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @DirectApi
+@Tag(name = "termsearch")
 @RequestMapping("/iams/api/termsearch")
 public interface TermServiceApi {
 

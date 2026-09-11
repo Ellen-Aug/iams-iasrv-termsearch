@@ -1,8 +1,9 @@
 # iams-iasvc-termsearch-svc
 
 REST Cloud rewrite of **IAMS Terminology Search** (`iams-iasrv-termsearch` 6.0.2 EJB / WebLogic)
-for OpenShift (`ha-app`). Layer 3 is on `base`: manager validation + JDBC search SQL
-(legacy `TermServiceDataAccessPOJO`). Local profile still does **not** open Oracle.
+for OpenShift (`ha-app`). Layer 4 is on `base`: `@DirectApi` impl
+`TermServiceApiImpl` + lookup tables `IAMS_VALUE` / `IAMS_VALUE_LIST`.
+Local profile still does **not** open Oracle.
 
 | | |
 |---|---|
@@ -20,8 +21,11 @@ Dockerfile  script/start.sh     ECP OpenJDK 21 · no summon-conjur
 values-{DEV,SIT,UAT,LPT,PRD}.yaml
 .github/workflows/development-workflow.yml
 src/main/java/hk/org/ha/iams/
-  tool/direct/                  @DirectApi @DirectManager @DirectDataAccess (copied markers)
+  tool/direct/                  @DirectApi @DirectManager @DirectDataAccess
   termsearch/controller|biz|dao|jpa
+    controller/impl/TermServiceApiImpl.java
+    biz/impl/TermServiceManagerImpl.java
+    dao/impl/TermServiceDataAccessPOJO.java
 ```
 
 ## Build
@@ -32,16 +36,16 @@ java -jar target/iams-iasvc-termsearch-svc.jar --spring.profiles.active=local
 ```
 
 Local profile does **not** open Oracle. Actuator: `/actuator/health/liveness`.
-OpenAPI: `/v3/api-docs`.
+OpenAPI: `/v3/api-docs` (tag `termsearch`).
 
-## Tests (Layer 0–3)
+## Tests (Layer 0–4)
 
 | Class | When it runs | What it proves |
-|---|---|
-| `TermServiceApiPlaceholderTest` | always | empty `{}` → **6**, malformed JSON → 400 |
+|---|---|---|
+| `TermServiceApiValidationTest` | always | empty `{}` → **6**, malformed JSON → 400 |
 | `TermServiceApiFixtureContractTest` | always | S1/S4/D1/D3 JSON binds; HTTP 200 |
 | `TermServiceApiEdgeTest` | always | S5/D5 → **6**; S6 → **7**; D4 → **9** + ALS 404 log |
-| `TermServiceApiHappyTest` | only if `ORACLE_PASSWORD` is set | S1–S4, D1–D3 → `returnCode` **0** against DEV Oracle |
+| `TermServiceApiHappyTest` | only if `ORACLE_PASSWORD` is set | S1–S4, D1–D2 → **0**; D3 → **9** (ICD9Px `100` not in DEV) |
 
 `./mvnw -B verify` without a password **skips** Happy (CI / laptop green).
 
@@ -67,7 +71,7 @@ $env:ORACLE_PASSWORD = "your-password"
 ./mvnw -B test "-Dtest=TermServiceApiHappyTest" "-Dsurefire.failIfNoSpecifiedTests=false"
 ```
 
-Do **not** use `DisabledCondition` deactivate. Happy now enables itself when the password env is non-empty and uses `@ActiveProfiles("dev")`.
+Do **not** use `DisabledCondition` deactivate. Happy enables itself when the password env is non-empty and uses `@ActiveProfiles("dev")`.
 
 Run the JAR against Oracle:
 
@@ -75,7 +79,10 @@ Run the JAR against Oracle:
 java -jar target/iams-iasvc-termsearch-svc.jar --spring.profiles.active=dev
 ```
 
-Lookup SQL (when UCP is on): `iams_lookup_value` + `iams_lookup_list`.
+Lookup SQL (when UCP is on): `IAMS_VALUE` + `IAMS_VALUE_LIST`. Startup log:
+`lookup tables value=IAMS_VALUE list=IAMS_VALUE_LIST`. Status text is then `A` not `15`.
+
+Helm `values-DEV.yaml` is unchanged (OCP user `iams_app_cld_rw_user`). PC uses Easy Connect + `iams`.
 
 ## CI / OCP (DEV)
 
@@ -91,8 +98,6 @@ Pipeline env: `APP_NAME=iams-iasvc-termsearch-svc` `MODULE=iams` `JAVA_VERSION=2
 
 GitHub Environment **DEV** secrets (not Git): `ORACLE_PASSWORD`, `ARTIFACTORY_USER`,
 `ARTIFACTORY_PASSWORD`, `ECP_SA_TOKEN_DEV_C1`.
-
-Helm `values-DEV.yaml` still has `REPLACE_DEV_HOST` and username `iams_app_cld_rw_user` (OCP app user). Local PC uses Easy Connect + `iams` as above.
 
 ## Out of this drop
 

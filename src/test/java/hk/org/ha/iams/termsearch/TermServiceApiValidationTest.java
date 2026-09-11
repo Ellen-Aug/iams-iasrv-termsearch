@@ -12,11 +12,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Scaffold smoke. Empty {} → 6 (missing compulsory). Malformed JSON → 400.
+ * Empty {} → 6 (missing compulsory). Malformed JSON → 400.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-class TermServiceApiPlaceholderTest {
+class TermServiceApiValidationTest {
 
     @Autowired
     private MockMvc mockMvc;

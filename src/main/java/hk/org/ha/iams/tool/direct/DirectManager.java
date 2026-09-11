@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** Marker for business manager contracts. Implementation is *ManagerPlaceholder. */
+/** Marker for business manager contracts. Implementation is *ManagerImpl. */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DirectManager {

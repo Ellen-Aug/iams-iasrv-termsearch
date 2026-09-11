@@ -12,11 +12,11 @@ import hk.org.ha.iams.termsearch.controller.TermServiceApi;
 
 @RestController
 @RequestMapping("/iams/api/termsearch")
-public class TermServiceApiPlaceholder implements TermServiceApi {
+public class TermServiceApiImpl implements TermServiceApi {
 
     private final TermServiceManager termServiceManager;
 
-    public TermServiceApiPlaceholder(TermServiceManager termServiceManager) {
+    public TermServiceApiImpl(TermServiceManager termServiceManager) {
         this.termServiceManager = termServiceManager;
     }
 
