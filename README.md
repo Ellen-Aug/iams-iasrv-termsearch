@@ -34,6 +34,26 @@ java -jar target/iams-iasvc-termsearch-svc.jar --spring.profiles.active=local
 Local profile does **not** open Oracle. Actuator: `/actuator/health/liveness`.
 OpenAPI: `/v3/api-docs`.
 
+## Tests (Layer 0–2)
+
+| Class | When it runs | What it proves |
+|---|---|---|
+| `TermServiceApiPlaceholderTest` | always | stub HTTP 200 + `returnCode` 7, malformed JSON → 400 |
+| `TermServiceApiFixtureContractTest` | always | S1/S4/D1/D3 JSON binds (Jackson) and stays HTTP 200 |
+| `TermServiceApiHappyTest` | `@Disabled` until SQL port | S1–S4, D1–D3 → `returnCode` 0 |
+| `TermServiceApiEdgeTest` | `@Disabled` until validation + SQL | S5/D5 → **6**; S6 → 7 (real no-record); D4 → **9** + ALS 404 log |
+
+Fixtures: `src/test/resources/fixtures/` (from old EJB `main()` tests / health servlets).
+Paste CMS/DEV Oracle bodies over `recordsPending: true` in `*.expected.json`.
+
+To run Happy/Edge locally (they **fail** on the stub — that is the TDD signal):
+
+```
+./mvnw -B test -Dtest=TermServiceApiHappyTest -Dsurefire.failIfNoSpecifiedTests=false
+```
+
+Remove `@Disabled` on those two classes after spec steps 6–7.
+
 ## CI / OCP (DEV)
 
 Pipeline env: `APP_NAME=iams-iasvc-termsearch-svc` `MODULE=iams` `JAVA_VERSION=21`.

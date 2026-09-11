@@ -33,6 +33,13 @@ public class GetTermDescCode implements Serializable {
 	private GetDescCodeType codeType;
 
 	/**
+	 * Jackson / REST. EJB clients used the typed constructor below.
+	 */
+	public GetTermDescCode() {
+		super();
+	}
+
+	/**
 	 * Constructs a new GetTermDescCode object by the given code type, code and extension.
 	 * 
 	 * @param codeType code type.

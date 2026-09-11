@@ -36,6 +36,13 @@ public class TermSrchCode implements Serializable {
 	private String codeTo;
 
 	/**
+	 * Jackson / REST. EJB clients used the typed constructors below.
+	 */
+	public TermSrchCode() {
+		super();
+	}
+
+	/**
 	 * Constructs a new TermSrchCode for code search by code type, search option and code.
 	 * 
 	 * @param codeType code type.
@@ -88,6 +95,10 @@ public class TermSrchCode implements Serializable {
 		return codeType;
 	}
 
+	public void setCodeType(CodeType codeType) {
+		this.codeType = codeType;
+	}
+
 	/**
 	 * Gets search type.
 	 * 
@@ -95,6 +106,10 @@ public class TermSrchCode implements Serializable {
 	 */
 	public SearchType getSearchType() {
 		return searchType;
+	}
+
+	public void setSearchType(SearchType searchType) {
+		this.searchType = searchType;
 	}
 
 	/**
@@ -106,6 +121,10 @@ public class TermSrchCode implements Serializable {
 		return searchOption;
 	}
 
+	public void setSearchOption(SearchOption searchOption) {
+		this.searchOption = searchOption;
+	}
+
 	/**
 	 * Gets code.
 	 * 
@@ -113,6 +132,10 @@ public class TermSrchCode implements Serializable {
 	 */
 	public String getCode() {
 		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	/**
@@ -124,6 +147,10 @@ public class TermSrchCode implements Serializable {
 		return extension;
 	}
 
+	public void setExtension(Integer extension) {
+		this.extension = extension;
+	}
+
 	/**
 	 * Get ending code.
 	 * 
@@ -133,6 +160,10 @@ public class TermSrchCode implements Serializable {
 		return codeFrom;
 	}
 
+	public void setCodeFrom(String codeFrom) {
+		this.codeFrom = codeFrom;
+	}
+
 	/**
 	 * Gets beginning code.
 	 * 
@@ -140,5 +171,9 @@ public class TermSrchCode implements Serializable {
 	 */
 	public String getCodeTo() {
 		return codeTo;
+	}
+
+	public void setCodeTo(String codeTo) {
+		this.codeTo = codeTo;
 	}
 }
