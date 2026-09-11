@@ -82,7 +82,7 @@ java -jar target/iams-iasvc-termsearch-svc.jar --spring.profiles.active=dev
 Lookup SQL (when UCP is on): `IAMS_VALUE` + `IAMS_VALUE_SET` + `IAMS_VALUE_LIST`.
 `IAMS_VALUE` has no `LIST_KEY`; list membership is the set table. Status text is then `A` not `15`.
 
-Helm `values-DEV.yaml` is unchanged (OCP user `iams_app_cld_rw_user`). PC uses Easy Connect + `iams`.
+Helm `values-DEV.yaml` uses OCP user **`iams`** (same as PC). Password still from secret `iams-iasvc-termsearch-svc-db` / `ORACLE_PASSWORD`. JDBC host is `REPLACE_DEV_HOST` until the DEV SCAN is filled.
 
 ## CI / OCP (DEV)
 

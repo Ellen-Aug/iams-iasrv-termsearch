@@ -58,7 +58,7 @@ env:
   - name: ALS_LOG_ENABLE
     value: "false"
   - name: ORACLE_USERNAME
-    value: iams_app_cld_rw_user
+    value: iams
   - name: ORACLE_URL
     value: "jdbc:oracle:thin:@(DESCRIPTION=(ENABLE=BROKEN)(CONNECT_TIMEOUT=120)(RETRY_COUNT=3)(RETRY_DELAY=3)(TRANSPORT_CONNECT_TIMEOUT=5)(LOAD_BALANCE=on)(FAILOVER=on)(ADDRESS=(PROTOCOL=TCP)(HOST=REPLACE_DEV_HOST)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=iams_dev_rw)))"
   - name: ORACLE_PASSWORD
