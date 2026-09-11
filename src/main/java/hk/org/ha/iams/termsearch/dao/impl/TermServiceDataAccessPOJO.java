@@ -1325,17 +1325,13 @@ public class TermServiceDataAccessPOJO implements TermServiceDataAccess {
 			String sql = "SELECT s.code, s.code_version, s.code_version_date FROM iams_concept_sct s WHERE s.term_key = :termKey ";
 
 			parameterMap.put("termKey", termKey);
-			SqlRowSet rs = getJdbcTemplate().queryForRowSet(sql, parameterMap);
-
-			while (rs.next()) {
+			snomedcts = getJdbcTemplate().query(sql, parameterMap, (rs, rowNum) -> {
 				Snomedct snomedct = new Snomedct();
-
 				snomedct.setCode(rs.getString("code"));
 				snomedct.setVersion(rs.getString("code_version"));
 				snomedct.setVersionDate(TermDates.fromJdbc(rs.getObject("code_version_date")));
-
-				snomedcts.add(snomedct);
-			}
+				return snomedct;
+			});
 		}
 		catch (Exception e) {
 			IamsExceptionHelper.throwsIAMSException("Failure in getting concept Snomed CT. Term key: " + termKey, e);
