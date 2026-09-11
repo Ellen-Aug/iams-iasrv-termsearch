@@ -1,0 +1,17 @@
+{
+  "in_requestSystem": "FM",
+  "in_keyword": "hypertension",
+  "in_keywordCodeTypes": ["ICD102010MBD"],
+  "in_status": "A",
+  "in_natures": ["Dx"],
+  "in_requestHospitalCode": "All",
+  "in_CDF_OverrideIndicator": true,
+  "in_CDF_Specialties": ["AE", "PSY"],
+  "out_codeTypes": ["All"],
+  "out_alias": true,
+  "out_associatedEntity": true,
+  "out_associatedCode": false,
+  "out_iamsInfo": true,
+  "out_refTerm": "HA",
+  "in_requestKey": "IAMS_TEST"
+}

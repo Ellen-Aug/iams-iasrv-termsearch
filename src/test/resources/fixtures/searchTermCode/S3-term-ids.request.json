@@ -1,0 +1,14 @@
+{
+  "in_requestSystem": "FM",
+  "in_termIds": [1069, 707, 704],
+  "in_termCodes": [],
+  "in_natures": ["Dx"],
+  "in_requestHospitalCode": "HO",
+  "in_systemUseds": [],
+  "in_excludeSystemUseds": [],
+  "out_codeTypes": ["All"],
+  "out_associatedEntity": false,
+  "out_iamsInfo": false,
+  "out_refTerm": "HA",
+  "in_requestKey": "IAMS_TEST"
+}

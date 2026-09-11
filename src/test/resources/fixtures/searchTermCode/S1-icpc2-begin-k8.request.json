@@ -1,0 +1,16 @@
+{
+  "in_requestSystem": "FM",
+  "in_termCodes": [
+    {
+      "codeType": "ICPC2",
+      "searchType": "CODE",
+      "searchOption": "BEGIN_WITH",
+      "code": "K8"
+    }
+  ],
+  "in_status": "All",
+  "in_natures": ["Dx"],
+  "out_codeTypes": ["All"],
+  "out_refTerm": "HA",
+  "in_requestKey": "IAMS_TEST"
+}

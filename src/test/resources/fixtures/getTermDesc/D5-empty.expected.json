@@ -1,0 +1,9 @@
+{
+  "httpStatus": 200,
+  "statusField": "status",
+  "returnCode": 6,
+  "minCount": 0,
+  "alsHttp404": false,
+  "recordsPending": false,
+  "source": "Empty JSON → missing inTermCodes and inTermIDs → 6, not 5."
+}

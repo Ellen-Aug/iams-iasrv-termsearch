@@ -1,0 +1,9 @@
+{
+  "httpStatus": 200,
+  "statusField": "status",
+  "returnCode": 0,
+  "minCount": 1,
+  "alsHttp404": false,
+  "recordsPending": true,
+  "source": "TestGetTermDescById.java — ids 1055, 1067, 1055 win over inTermCodes"
+}

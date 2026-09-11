@@ -1,0 +1,11 @@
+{
+  "inRequestKey": "IAMS_TEST",
+  "inTermIDs": [1055, 1067, 1055],
+  "inTermCodes": [
+    {
+      "codeType": "ICD9Dx",
+      "code": "010.8",
+      "extension": 0
+    }
+  ]
+}

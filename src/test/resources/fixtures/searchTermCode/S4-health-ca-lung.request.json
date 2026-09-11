@@ -1,0 +1,14 @@
+{
+  "in_requestSystem": "CMS_CORE",
+  "in_keyword": "ca lung",
+  "in_keywordCodeTypes": ["ICD9Dx"],
+  "out_recordsLimit": 0,
+  "in_status": "A",
+  "in_natures": ["Dx"],
+  "in_CDF_OverrideIndicator": true,
+  "in_Top40_OverrideIndicator": true,
+  "out_associatedCode": true,
+  "out_codeTypes": ["All"],
+  "out_refTerm": "HA",
+  "in_requestKey": "HEALTH_TEST"
+}

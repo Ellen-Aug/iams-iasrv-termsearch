@@ -1,0 +1,9 @@
+{
+  "httpStatus": 200,
+  "statusField": "termStatus",
+  "returnCode": 6,
+  "minCount": 0,
+  "alsHttp404": false,
+  "recordsPending": false,
+  "source": "Empty JSON object binds a non-null TermSrchCriteria → EXCEPTION_MISSING_COMPULSORY_INPUT_PARAMETERS (6), not 5. 5 is only for a null criteria object."
+}

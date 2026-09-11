@@ -1,0 +1,8 @@
+{
+  "inRequestKey": "HEALTH_TEST",
+  "inTermCodes": [
+    { "codeType": "ICD9Dx", "code": "160.0", "extension": 0 },
+    { "codeType": "ICD9Px", "code": "01.09", "extension": 1 },
+    { "codeType": "ICD9Px", "code": "100", "extension": 0 }
+  ]
+}

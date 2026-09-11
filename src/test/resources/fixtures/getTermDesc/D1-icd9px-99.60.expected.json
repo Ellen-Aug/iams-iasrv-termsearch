@@ -1,0 +1,9 @@
+{
+  "httpStatus": 200,
+  "statusField": "status",
+  "returnCode": 0,
+  "minCount": 1,
+  "alsHttp404": false,
+  "recordsPending": true,
+  "source": "TestGetTermDescByCode.java — ICD9Px 99.60 / 0"
+}

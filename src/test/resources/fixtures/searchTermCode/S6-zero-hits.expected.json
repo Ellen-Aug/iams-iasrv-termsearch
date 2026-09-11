@@ -1,0 +1,9 @@
+{
+  "httpStatus": 200,
+  "statusField": "termStatus",
+  "returnCode": 7,
+  "minCount": 0,
+  "alsHttp404": false,
+  "recordsPending": false,
+  "source": "Valid envelope, unknown ICPC2 code. Do not treat the current stub message 'SQL port pending' as a real no-record."
+}

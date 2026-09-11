@@ -1,0 +1,9 @@
+{
+  "httpStatus": 200,
+  "statusField": "status",
+  "returnCode": 9,
+  "minCount": 0,
+  "alsHttp404": true,
+  "recordsPending": false,
+  "source": "Unknown ICD9Dx 999.99/99. HTTP 200 + ERROR_SOME_RECORDS_NOT_FOUND (9). ALS stub logs HTTP 404. Never return HTTP 404 to CMS."
+}
