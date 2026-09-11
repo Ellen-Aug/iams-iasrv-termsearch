@@ -5,23 +5,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Layer 2 happy paths from old EJB tests. Enable after TermServiceDataAccessPOJO SQL port.
- * Stub today returns returnCode 7 ("SQL port pending") — these would fail, which is the TDD signal.
+ * Happy paths against DEV Oracle. Skipped unless ORACLE_PASSWORD is set so
+ * {@code ./mvnw -B verify} stays green without a database.
  */
-@Disabled("Enable after DEV Oracle (termsearch.datasource.enabled=true). Local profile has no DataSource so valid searches return 7.")
+@EnabledIfEnvironmentVariable(named = "ORACLE_PASSWORD", matches = ".+")
+@ActiveProfiles("dev")
 @SpringBootTest
 @AutoConfigureMockMvc
 class TermServiceApiHappyTest {

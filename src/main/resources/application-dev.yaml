@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: ${ORACLE_URL:jdbc:oracle:thin:@//cdcdev33:19000/iamhaod1.cdcoradb11.server.ha.org.hk}
+    username: ${ORACLE_USERNAME:iams}
+    password: ${ORACLE_PASSWORD:}
+    type: oracle.ucp.jdbc.PoolDataSource
+    oracleucp:
+      connection-pool-name: IamsTermsearchUCP
+      fast-connection-failover-enabled: true
+      validate-connection-on-borrow: true
+      sql-for-validate-connection: SELECT 1 FROM DUAL
+      initial-pool-size: 1
+      min-pool-size: 1
+      max-pool-size: 10
+
+termsearch:
+  datasource:
+    enabled: true

@@ -37,13 +37,43 @@ OpenAPI: `/v3/api-docs`.
 ## Tests (Layer 0–3)
 
 | Class | When it runs | What it proves |
-|---|---|---|
+|---|---|
 | `TermServiceApiPlaceholderTest` | always | empty `{}` → **6**, malformed JSON → 400 |
 | `TermServiceApiFixtureContractTest` | always | S1/S4/D1/D3 JSON binds; HTTP 200 |
 | `TermServiceApiEdgeTest` | always | S5/D5 → **6**; S6 → **7**; D4 → **9** + ALS 404 log |
-| `TermServiceApiHappyTest` | `@Disabled` until DEV Oracle | S1–S4, D1–D3 → `returnCode` **0** |
+| `TermServiceApiHappyTest` | only if `ORACLE_PASSWORD` is set | S1–S4, D1–D3 → `returnCode` **0** against DEV Oracle |
 
-Local profile does **not** open Oracle (`termsearch.datasource.enabled=false`). Valid searches then return 7 (empty DAO). Point `ORACLE_URL` / profile `dev` at DEV TNS, then remove `@Disabled` on HappyTest.
+`./mvnw -B verify` without a password **skips** Happy (CI / laptop green).
+
+## DEV Oracle on your PC
+
+VPN to HA network required. **Password is env-only — never commit it, never paste it in chat.**
+
+Defaults in `application-dev.yaml`:
+
+- URL: `jdbc:oracle:thin:@//cdcdev33:19000/iamhaod1.cdcoradb11.server.ha.org.hk`
+- User: `iams`
+
+```powershell
+git pull origin base
+
+$env:ORACLE_PASSWORD = "your-password"
+# optional overrides:
+# $env:ORACLE_URL = "jdbc:oracle:thin:@//cdcdev33:19000/iamhaod1.cdcoradb11.server.ha.org.hk"
+# $env:ORACLE_USERNAME = "iams"
+
+"url=$env:ORACLE_URL user=$env:ORACLE_USERNAME pwLen=$($env:ORACLE_PASSWORD.Length)"
+
+./mvnw -B test "-Dtest=TermServiceApiHappyTest" "-Dsurefire.failIfNoSpecifiedTests=false"
+```
+
+Do **not** use `DisabledCondition` deactivate. Happy now enables itself when the password env is non-empty and uses `@ActiveProfiles("dev")`.
+
+Run the JAR against Oracle:
+
+```powershell
+java -jar target/iams-iasvc-termsearch-svc.jar --spring.profiles.active=dev
+```
 
 Lookup SQL (when UCP is on): `iams_lookup_value` + `iams_lookup_list`.
 
@@ -62,10 +92,9 @@ Pipeline env: `APP_NAME=iams-iasvc-termsearch-svc` `MODULE=iams` `JAVA_VERSION=2
 GitHub Environment **DEV** secrets (not Git): `ORACLE_PASSWORD`, `ARTIFACTORY_USER`,
 `ARTIFACTORY_PASSWORD`, `ECP_SA_TOKEN_DEV_C1`.
 
-Replace `REPLACE_*_HOST` in `values-*.yaml` with DBA TNS hosts before deploy.
+Helm `values-DEV.yaml` still has `REPLACE_DEV_HOST` and username `iams_app_cld_rw_user` (OCP app user). Local PC uses Easy Connect + `iams` as above.
 
 ## Out of this drop
 
 - Conjur / Summon, EHR `common-ucp`, ALS JARs, Snowstorm, JMS, SGR
 - SIT→PRD promotion workflows
-- HappyTest against live DEV Oracle (remove `@Disabled` after TNS is set)
