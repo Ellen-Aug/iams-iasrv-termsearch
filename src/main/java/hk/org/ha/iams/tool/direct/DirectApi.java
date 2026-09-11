@@ -1,0 +1,12 @@
+package hk.org.ha.iams.tool.direct;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/** Marker for HTTP API contracts. Spring maps the *Placeholder @RestController, not this type. */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DirectApi {
+}

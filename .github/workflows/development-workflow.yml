@@ -1,0 +1,115 @@
+name: development-workflow
+
+# IAMS DEV Docker CI/CD — this phase is DEV only.
+# When the repo lives under the IAMS GitHub org, set runs-on to [iams]
+# and use org secrets iams-cdra-dev / ECP_SA_TOKEN_DEV_C1 / paasuser.
+
+on:
+  push:
+    branches: [base, main]
+  pull_request:
+    branches: [base, main]
+  workflow_dispatch:
+
+env:
+  APP_NAME: iams-iasvc-termsearch-svc
+  MODULE: iams
+  JAVA_VERSION: "21"
+  ARTIFACTORY_HOST: artifactrepo.server.ha.org.hk:55743
+  IMAGE_PUSH_REPO: int-docker-dev-iams
+  IMAGE_PULL_REPO: docker-dev-iams
+  OCP_NAMESPACE: iams-dev-1
+  HELM_VALUES: values-DEV.yaml
+
+jobs:
+  build:
+    name: maven-verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Maven verify
+        run: ./mvnw -B -ntp verify
+
+      - name: Upload fat JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-jar
+          path: target/${{ env.APP_NAME }}.jar
+          if-no-files-found: error
+
+  image:
+    name: docker-build-push
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download fat JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-jar
+          path: target
+
+      - name: Image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      - name: Build image
+        run: |
+          docker build -t "${ARTIFACTORY_HOST}/${IMAGE_PUSH_REPO}/${APP_NAME}:${{ steps.meta.outputs.tag }}" \
+                       -t "${ARTIFACTORY_HOST}/${IMAGE_PUSH_REPO}/${APP_NAME}:latest" .
+
+      - name: Push image
+        env:
+          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+        run: |
+          if [ -z "${ARTIFACTORY_USER:-}" ]; then
+            echo "No Artifactory credentials on this GitHub repo; skip push."
+            exit 0
+          fi
+          echo "$ARTIFACTORY_PASSWORD" | docker login "$ARTIFACTORY_HOST" -u "$ARTIFACTORY_USER" --password-stdin
+          docker push "${ARTIFACTORY_HOST}/${IMAGE_PUSH_REPO}/${APP_NAME}:${{ steps.meta.outputs.tag }}"
+          docker push "${ARTIFACTORY_HOST}/${IMAGE_PUSH_REPO}/${APP_NAME}:latest"
+
+  deploy:
+    name: ocp-helm-dev
+    needs: image
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/base'
+    runs-on: ubuntu-latest
+    environment: DEV
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Helm upgrade (ha-app values-only)
+        env:
+          ECP_SA_TOKEN_DEV_C1: ${{ secrets.ECP_SA_TOKEN_DEV_C1 }}
+          OCP_API: ${{ vars.OCP_API }}
+          HELM_CHART_REPO: ${{ vars.HELM_CHART_REPO }}
+        run: |
+          echo "Deploy ${APP_NAME} to ${OCP_NAMESPACE} using ${HELM_VALUES}"
+          echo "image.repository=${ARTIFACTORY_HOST}/${IMAGE_PULL_REPO}/${APP_NAME}"
+          echo "image.tag=${{ needs.image.outputs.tag }}"
+          echo "fullnameOverride=${APP_NAME}"
+          echo "Cluster pull account: paasuser"
+          echo "Chart is values-only against ha-app from helm-dev-chassis."
+          if [ -z "${ECP_SA_TOKEN_DEV_C1:-}" ]; then
+            echo "OCP deploy skipped: ECP_SA_TOKEN_DEV_C1 not configured."
+            echo "Move this repository to the IAMS org (or add the DEV environment secrets) to enable deploy."
+            exit 0
+          fi
+          echo "oc/helm commands would run here once IAMS org secrets are present."
