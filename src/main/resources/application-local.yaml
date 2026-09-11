@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+termsearch:
+  datasource:
+    enabled: false
+
+logging:
+  level:
+    hk.org.ha.iams: DEBUG
