@@ -79,8 +79,8 @@ Run the JAR against Oracle:
 java -jar target/iams-iasvc-termsearch-svc.jar --spring.profiles.active=dev
 ```
 
-Lookup SQL (when UCP is on): `IAMS_VALUE` + `IAMS_VALUE_LIST`. Startup log:
-`lookup tables value=IAMS_VALUE list=IAMS_VALUE_LIST`. Status text is then `A` not `15`.
+Lookup SQL (when UCP is on): `IAMS_VALUE` + `IAMS_VALUE_SET` + `IAMS_VALUE_LIST`.
+`IAMS_VALUE` has no `LIST_KEY`; list membership is the set table. Status text is then `A` not `15`.
 
 Helm `values-DEV.yaml` is unchanged (OCP user `iams_app_cld_rw_user`). PC uses Easy Connect + `iams`.
 
